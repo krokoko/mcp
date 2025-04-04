@@ -64,6 +64,10 @@ jobs:
         working-directory: src/${{ matrix.package }}
         run: uv sync --frozen --all-extras --dev
 
+      - name: Run tests
+        working-directory: src/${{ matrix.package }}
+        run: uv run --frozen pytest
+
       - name: Run pyright
         working-directory: src/${{ matrix.package }}
         run: uv run --frozen pyright
