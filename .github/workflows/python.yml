@@ -66,7 +66,12 @@ jobs:
 
       - name: Run tests
         working-directory: src/${{ matrix.package }}
-        run: uv run --frozen pytest
+        run: |
+          if [ -d "tests" ]; then
+            uv run --frozen pytest
+          else
+            echo "No tests directory found, skipping tests"
+          fi
 
       - name: Run pyright
         working-directory: src/${{ matrix.package }}
