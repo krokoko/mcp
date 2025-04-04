@@ -52,7 +52,7 @@ jobs:
 
       - name: Security check - Bandit
         working-directory: src/${{ matrix.package }}
-        run: bandit --recursive -ll -x tests/ --format html --output bandit-report-${{ matrix.package }}.html .
+        run: bandit --recursive -ll --format html --output bandit-report-${{ matrix.package }}.html -r . -c "pyproject.toml" || exit 1
 
       - name: Store Bandit as Artifact
         uses: actions/upload-artifact@v4
