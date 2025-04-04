@@ -48,7 +48,7 @@ jobs:
           # cache: uv (not supported)
 
       - name: Install Bandit
-        run: pip install bandit
+        run: pip install bandit[toml]
 
       - name: Security check - Bandit
         working-directory: src/${{ matrix.package }}
