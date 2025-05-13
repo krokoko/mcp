@@ -23,6 +23,7 @@ A suite of specialized MCP servers that help you get the most out of AWS, wherev
   - [AWS Terraform MCP Server](#aws-terraform-mcp-server)
   - [AWS Location Service MCP Server](#aws-location-service-mcp-server)
   - [Git Repo Research MCP Server](#git-repo-research-mcp-server)
+  - [Postgres MCP Server](#postgres-mcp-server)
   - [Use Cases for the Servers](#use-cases-for-the-servers)
 - [Installation and Setup](#installation-and-setup)
   - [Getting Started with Cline and Amazon Bedrock](#getting-started-with-cline-and-amazon-bedrock)
@@ -45,7 +46,7 @@ A suite of specialized MCP servers that help you get the most out of AWS, wherev
 >
 > &mdash; [Model Context Protocol README](https://github.com/modelcontextprotocol#:~:text=The%20Model%20Context,context%20they%20need.)
 
-An MCP Server is a lightweight program that exposes specific capabilities through the standardized Model Context Protocol. Host applications (such as chatbots, IDEs, and other AI tools) have MCP clients that maintain 1:1 connections with MCP servers. Common MCP clients includ agentic AI coding assistants (like Q Developer, Cline, Cursor, Windsurf) as well as chatbot applications like Claude Desktop, with more clients coming soon. MCP servers can access local data sources and remote services to provide additional context that improves the generated outputs from the models.
+An MCP Server is a lightweight program that exposes specific capabilities through the standardized Model Context Protocol. Host applications (such as chatbots, IDEs, and other AI tools) have MCP clients that maintain 1:1 connections with MCP servers. Common MCP clients include agentic AI coding assistants (like Q Developer, Cline, Cursor, Windsurf) as well as chatbot applications like Claude Desktop, with more clients coming soon. MCP servers can access local data sources and remote services to provide additional context that improves the generated outputs from the models.
 
 AWS MCP Servers use this protocol to provide AI applications access to AWS documentation, contextual guidance, and best practices. Through the standardized MCP client-server architecture, AWS capabilities become an intelligent extension of your development environment or AI application.
 
@@ -214,6 +215,17 @@ A server for researching Git repositories using semantic search.
 
 [Learn more](src/git-repo-research-mcp-server/README.md) | [Documentation](https://awslabs.github.io/mcp/servers/git-repo-research-mcp-server/)
 
+### Postgres MCP Server
+
+[![PyPI version](https://img.shields.io/pypi/v/awslabs.postgres-mcp-server.svg)](https://pypi.org/project/awslabs.postgres-mcp-server/)
+
+A server for Aurora Postgres.
+
+- Converting human-readable questions and commands into structured Postgres-compatible SQL queries and executing them against the configured Aurora Postgres database
+- Fetch table columns and comments from Postgres using RDS Data API
+
+[Learn more](src/postgres-mcp-server/README.md) | [Documentation](https://awslabs.github.io/mcp/servers/postgres-mcp-server/)
+
 ### Use Cases for the Servers
 
 For example, you can use the **AWS Documentation MCP Server** to help your AI assistant research and generate up-to-date code for any AWS service, like Amazon Bedrock Inline agents. Alternatively, you could use the **CDK MCP Server** or the **Terraform MCP Server** to have your AI assistant create infrastructure-as-code implementations that use the latest APIs and follow AWS best practices. With the **Cost Analysis MCP Server**, you could ask "What would be the estimated monthly cost for this CDK project before I deploy it?" or "Can you help me understand the potential AWS service expenses for this infrastructure design?" and receive detailed cost estimations and budget planning insights.
@@ -237,7 +249,6 @@ Example configuration for Amazon Q CLI MCP (`~/.aws/amazonq/mcp.json`):
       "args": ["awslabs.core-mcp-server@latest"],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR",
-        "MCP_SETTINGS_PATH": "path to your mcp settings file"
       }
     },
     "awslabs.nova-canvas-mcp-server": {
@@ -314,7 +325,7 @@ Example configuration for Amazon Q CLI MCP (`~/.aws/amazonq/mcp.json`):
        "disabled": false,
        "autoApprove": []
     },
-    "awslabs.git-repo-research-mcp-server": {
+    "awslabs.git-research": {
       "command": "uvx",
       "args": ["awslabs.git-repo-research-mcp-server@latest"],
       "env": {
