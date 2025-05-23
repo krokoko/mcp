@@ -409,6 +409,8 @@ An AWS Labs Model Context Protocol (MCP) server for Aurora DSQL
 
 ### Amazon DynamoDB MCP Server
 
+[![PyPI version](https://img.shields.io/pypi/v/awslabs.dynamodb-mcp-server.svg)](https://pypi.org/project/awslabs.dynamodb-mcp-server/)
+
 A server for interacting with Amazon DynamoDB
 
 - Control Plane operations like table creation, table update, global secondary index, streams, global table management, backup, restore, etc.
