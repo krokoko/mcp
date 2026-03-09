@@ -17,7 +17,6 @@ import json
 import mimetypes
 import os
 import sys
-from pathlib import Path
 from awslabs.git_repo_research_mcp_server.defaults import Constants
 from awslabs.git_repo_research_mcp_server.github_search import (
     github_repo_search_wrapper,
@@ -43,6 +42,7 @@ from datetime import datetime
 from loguru import logger
 from mcp.server.fastmcp import Context, FastMCP, Image
 from mcp.types import ImageContent
+from pathlib import Path
 from pydantic import Field
 from typing import Dict, List, Optional, Union
 
