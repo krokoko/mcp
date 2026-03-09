@@ -545,16 +545,19 @@ async def test_access_file_rejects_non_repository_format():
     Prevents arbitrary file read e.g. /etc/passwd or ~/.aws/credentials.
     """
     result = await access_file_or_directory('/etc/passwd')
+    assert isinstance(result, str)
     data = json.loads(result)
     assert data['status'] == 'error'
     assert 'repository format' in data['message'].lower()
 
     result = await access_file_or_directory('/home/ubuntu/.aws/credentials')
+    assert isinstance(result, str)
     data = json.loads(result)
     assert data['status'] == 'error'
     assert 'repository format' in data['message'].lower()
 
     result = await access_file_or_directory('relative/path/without/repository')
+    assert isinstance(result, str)
     data = json.loads(result)
     assert data['status'] == 'error'
     assert 'repository format' in data['message'].lower()
@@ -577,6 +580,7 @@ async def test_access_file_rejects_path_traversal():
     ):
         # Path that resolves to /etc/passwd (outside repo_path); must be rejected
         result = await access_file_or_directory('some_repo/repository/../../../../etc/passwd')
+    assert isinstance(result, str)
     data = json.loads(result)
     assert data['status'] == 'error'
     msg = data['message'].lower()

@@ -573,28 +573,28 @@ async def access_file_or_directory(filepath: str) -> Union[str, List[str], Image
             )
 
         # Use only the validated path for all file operations
-        filepath = safe_path
+        resolved_path = safe_path
 
         # If it's a directory, return a listing of files
-        if filepath.is_dir():
-            files = os.listdir(filepath)
+        if resolved_path.is_dir():
+            files = os.listdir(resolved_path)
             return json.dumps(
                 {
                     'status': 'success',
                     'type': 'directory',
-                    'path': str(filepath),
+                    'path': str(resolved_path),
                     'files': files,
                 }
             )
 
         # If it's a file, determine the mime type
-        mime_type, _ = mimetypes.guess_type(str(filepath))
+        mime_type, _ = mimetypes.guess_type(str(resolved_path))
 
         # If it's an image, return the image data
         if mime_type and mime_type.startswith('image/'):
             try:
                 # Read file directly as binary data
-                with open(filepath, 'rb') as f:
+                with open(resolved_path, 'rb') as f:
                     image_data = f.read()
 
                 # Extract format from mime_type (e.g., "image/png" -> "png")
@@ -613,7 +613,7 @@ async def access_file_or_directory(filepath: str) -> Union[str, List[str], Image
 
         # For text files, return the content as a string
         try:
-            with open(filepath, 'r', encoding='utf-8') as f:
+            with open(resolved_path, 'r', encoding='utf-8') as f:
                 content = f.read()
             return content
         except UnicodeDecodeError:
@@ -621,7 +621,7 @@ async def access_file_or_directory(filepath: str) -> Union[str, List[str], Image
             return json.dumps(
                 {
                     'status': 'error',
-                    'message': f'File appears to be binary and not an image: {filepath!s}',
+                    'message': f'File appears to be binary and not an image: {resolved_path!s}',
                 }
             )
 
