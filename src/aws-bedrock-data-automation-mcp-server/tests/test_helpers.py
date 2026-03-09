@@ -284,7 +284,9 @@ async def test_upload_to_s3_uses_sanitized_path_not_raw_input():
                 'awslabs.aws_bedrock_data_automation_mcp_server.helpers.Path.exists',
                 return_value=True,
             ):
-                with patch('builtins.open', mock_open(read_data=b'safe content')) as mock_file_open:
+                with patch(
+                    'builtins.open', mock_open(read_data=b'safe content')
+                ) as mock_file_open:
                     with patch(
                         'awslabs.aws_bedrock_data_automation_mcp_server.helpers.get_s3_client',
                     ) as mock_get_client:

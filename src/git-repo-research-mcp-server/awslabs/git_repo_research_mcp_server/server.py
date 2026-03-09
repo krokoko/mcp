@@ -71,12 +71,11 @@ def _resolve_and_validate_under_base(file_path: str, base_dir: str) -> Path:
         if not resolved.exists():
             raise ValueError(f'File or directory not found: {file_path}')
         if not resolved.is_relative_to(base):
-            raise ValueError(
-                f'Path traversal blocked: path must be under {base}'
-            )
+            raise ValueError(f'Path traversal blocked: path must be under {base}')
         return resolved
     except (OSError, RuntimeError) as e:
         raise ValueError(f'Invalid path: {file_path}') from e
+
 
 # Create the MCP server
 mcp = FastMCP(
