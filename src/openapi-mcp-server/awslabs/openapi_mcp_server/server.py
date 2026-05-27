@@ -315,9 +315,9 @@ async def create_mcp_server_async(config: Config) -> FastMCP:
         if config.additional_specs:
             import json
 
-            allow_invalid_specs = os.environ.get(
-                'ADDITIONAL_SPECS_ALLOW_INVALID', 'false'
-            ).lower() == 'true'
+            allow_invalid_specs = (
+                os.environ.get('ADDITIONAL_SPECS_ALLOW_INVALID', 'false').lower() == 'true'
+            )
 
             try:
                 extra_specs = json.loads(config.additional_specs)
@@ -375,7 +375,10 @@ async def create_mcp_server_async(config: Config) -> FastMCP:
                     # SECURITY: Do NOT inherit primary API auth by default to prevent
                     # credential leakage to untrusted endpoints (CWE-522).
                     extra_auth_config = entry.get('auth')
-                    if isinstance(extra_auth_config, str) and extra_auth_config.lower() == 'inherit':
+                    if (
+                        isinstance(extra_auth_config, str)
+                        and extra_auth_config.lower() == 'inherit'
+                    ):
                         extra_headers = auth_headers
                         extra_httpx_auth = httpx_auth
                         extra_cookies = auth_cookies
