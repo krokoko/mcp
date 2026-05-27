@@ -798,3 +798,89 @@ class TestAdditionalSpecIntegration:
 
         # Only primary — "false" string should NOT be truthy
         assert mock_create_client.call_count == 1
+
+    @patch('awslabs.openapi_mcp_server.auth.get_auth_provider')
+    @patch('awslabs.openapi_mcp_server.server.OpenAPIProvider')
+    @patch('awslabs.openapi_mcp_server.server.FastMCP')
+    @patch('awslabs.openapi_mcp_server.server.load_openapi_spec')
+    @patch('awslabs.openapi_mcp_server.server.HttpClientFactory.create_client')
+    def test_allow_invalid_non_bool_non_str_falls_back(
+        self,
+        mock_create_client,
+        mock_load_spec,
+        mock_fastmcp,
+        mock_openapi_provider,
+        mock_get_auth,
+    ):
+        """allow_invalid as non-bool/non-str (e.g. int) falls back to global."""
+        mock_get_auth.return_value = _make_mock_auth()
+        mock_fastmcp.return_value = MagicMock()
+        mock_load_spec.return_value = SAMPLE_SPEC
+        mock_create_client.return_value = MagicMock()
+
+        config = _test_config(
+            json.dumps(
+                [
+                    {
+                        'name': 'spec',
+                        'spec_url': 'https://partner.com/spec.json',
+                        'base_url': 'https://partner.com',
+                        'allow_invalid': 1,
+                    }
+                ]
+            )
+        )
+
+        with patch(
+            'awslabs.openapi_mcp_server.server.validate_openapi_spec',
+            side_effect=[True, False],
+        ):
+            create_mcp_server(config)
+
+        # Global default is false, so spec is skipped
+        assert mock_create_client.call_count == 1
+
+    @patch('awslabs.openapi_mcp_server.auth.get_auth_provider')
+    @patch('awslabs.openapi_mcp_server.server.OpenAPIProvider')
+    @patch('awslabs.openapi_mcp_server.server.FastMCP')
+    @patch('awslabs.openapi_mcp_server.server.load_openapi_spec')
+    @patch(
+        'awslabs.openapi_mcp_server.server.validate_openapi_spec',
+        return_value=True,
+    )
+    @patch('awslabs.openapi_mcp_server.server.HttpClientFactory.create_client')
+    def test_client_creation_failure_skips_spec(
+        self,
+        mock_create_client,
+        mock_validate,
+        mock_load_spec,
+        mock_fastmcp,
+        mock_openapi_provider,
+        mock_get_auth,
+    ):
+        """If HttpClientFactory.create_client raises, spec is skipped."""
+        mock_get_auth.return_value = _make_mock_auth()
+        mock_fastmcp.return_value = MagicMock()
+        mock_load_spec.return_value = SAMPLE_SPEC
+        # First call (primary) succeeds, second call (additional) raises
+        mock_create_client.side_effect = [
+            MagicMock(),
+            RuntimeError('connection pool exhausted'),
+        ]
+
+        config = _test_config(
+            json.dumps(
+                [
+                    {
+                        'name': 'broken',
+                        'spec_url': 'https://partner.com/spec.json',
+                        'base_url': 'https://partner.com',
+                    }
+                ]
+            )
+        )
+
+        create_mcp_server(config)
+
+        # Server should still be created (failure doesn't crash)
+        mock_fastmcp.assert_called_once()
